@@ -2,13 +2,18 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.service import Service
+
 import time
 
 import os 
 from dotenv import load_dotenv
 load_dotenv()
 
-driver = webdriver.Chrome("chromedriver")
+TIMEOUTLIMIT = 20
+
+chromeDriverService=Service("/usr/local/bin/chromedriver")
+driver = webdriver.Chrome(service=chromeDriverService)
 driver.get("https://whitecloak.hrhub.ph/Login.aspx")
 
 def login(): 
@@ -23,8 +28,8 @@ def checkIsLoggedIn():
 
 def timeinOrTimeout():
     clockClassname = "small-image"
-    WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.CLASS_NAME, clockClassname)))
-    driver.find_element(By.CLASS_NAME, clockClassname).click()
+    element = WebDriverWait(driver, TIMEOUTLIMIT).until(EC.element_to_be_clickable((By.CLASS_NAME, clockClassname)))
+    element.click()
 
     isLoggedIn = checkIsLoggedIn()
     if isLoggedIn: 
@@ -32,31 +37,31 @@ def timeinOrTimeout():
     else: 
         driver.find_element(By.XPATH, '//li[@data-bind="click: webBundyLogIn"]').click()
 
-def confirmPopUp():   
-    successButtonXPath = "//button[@data-bb-handler='success']"
-    WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH, successButtonXPath)))
-    driver.find_element(By.XPATH, successButtonXPath).click()
-
-def closeConfirmationPopUp():
-    okButtonXPath = "//button[@data-bb-handler='ok']"
-    WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH, okButtonXPath)))
-    driver.find_element(By.XPATH, okButtonXPath).click()
+def confirmPopUpByXPath(xpath):   
+    element = WebDriverWait(driver, TIMEOUTLIMIT).until(EC.element_to_be_clickable((By.XPATH, xpath)))
+    element.click()
 
 def reloadPage(): 
     driver.refresh()
 
 def closeAndQuitBrowser(): 
-    # 5 seconds to check if login/logout is logged on dashboard
-    time.sleep(5)
+    logsBufferTime = 5
+    time.sleep(logsBufferTime)
     driver.close()
     driver.quit()
 
-try: 
+def runAll():
+    successButtonXPath = "//button[@data-bb-handler='success']"
+    okButtonXpath = "//button[@data-bb-handler='ok']"
+
     login()
     timeinOrTimeout()
-    confirmPopUp()
-    closeConfirmationPopUp()
+    confirmPopUpByXPath(successButtonXPath)
+    confirmPopUpByXPath(okButtonXpath)
     reloadPage()
     closeAndQuitBrowser()
+
+try: 
+    runAll()
 except: 
     print("Something went wrong")
