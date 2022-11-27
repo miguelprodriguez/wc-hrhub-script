@@ -22,9 +22,9 @@ def login():
     driver.find_element(By.NAME, "btnLogIn").click()
 
 def checkIsLoggedIn(): 
-    firstRowSelector = "#dashboard-container-fluid > div.col-md-12 > div > div.col-md-8 > div > div.col-md-6.widget.clearfix > div > div.widget-wrapper > div.widget-content > div.widget-body > div:nth-child(2) > table > tbody > tr:nth-child(1) > td:nth-child(2) > span:nth-child(1)"
-    firstRowText = driver.find_element(By.CSS_SELECTOR, firstRowSelector).get_attribute("innerText")
-    return firstRowText == 'IN'
+    latestLog = '//span[@data-bind="if: InOutMode == 0"]'
+    latestLogText = driver.find_element(By.XPATH, latestLog).get_attribute("innerText")
+    return latestLogText == 'IN'
 
 def timeinOrTimeout():
     clockClassname = "small-image"
