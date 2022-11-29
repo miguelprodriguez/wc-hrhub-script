@@ -10,10 +10,10 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-TIMEOUTLIMIT = 20
+TIMEOUT_LIMIT = 20
 
-chromeDriverService=Service("/usr/local/bin/chromedriver")
-driver = webdriver.Chrome(service=chromeDriverService)
+chrome_driver_service=Service("/usr/local/bin/chromedriver")
+driver = webdriver.Chrome(service=chrome_driver_service)
 driver.get("https://whitecloak.hrhub.ph/Login.aspx")
 
 def login(): 
@@ -21,30 +21,30 @@ def login():
     driver.find_element(By.ID, "txtPassword").send_keys(os.getenv('PASSWORD'))
     driver.find_element(By.NAME, "btnLogIn").click()
 
-def checkIsLoggedIn(): 
-    latestLog = '//span[@data-bind="if: InOutMode == 0"]'
-    latestLogText = driver.find_element(By.XPATH, latestLog).get_attribute("innerText")
-    return latestLogText == 'IN'
+def check_is_logged_in(): 
+    latest_log = '//span[@data-bind="if: InOutMode == 0"]'
+    latest_log_text = driver.find_element(By.XPATH, latest_log).get_attribute("innerText")
+    return latest_log_text == 'IN'
 
-def timeinOrTimeout():
-    clockClassname = "small-image"
-    element = WebDriverWait(driver, TIMEOUTLIMIT).until(EC.element_to_be_clickable((By.CLASS_NAME, clockClassname)))
-    element.click()
+def toggle_timein_or_timeout():
+    clock_classname = "small-image"
+    clock_element = WebDriverWait(driver, TIMEOUT_LIMIT).until(EC.element_to_be_clickable((By.CLASS_NAME, clock_classname)))
+    clock_element.click()
 
-    isLoggedIn = checkIsLoggedIn()
-    if isLoggedIn: 
+    is_logged_in = check_is_logged_in()
+    if is_logged_in: 
         driver.find_element(By.XPATH, '//li[@data-bind="click: webBundyLogOut"]').click()
     else: 
         driver.find_element(By.XPATH, '//li[@data-bind="click: webBundyLogIn"]').click()
 
-def confirmPopUpByXPath(xpath):   
-    element = WebDriverWait(driver, TIMEOUTLIMIT).until(EC.element_to_be_clickable((By.XPATH, xpath)))
-    element.click()
+def confirm_popup_by_xpath(xpath):   
+    xpath_element = WebDriverWait(driver, TIMEOUT_LIMIT).until(EC.element_to_be_clickable((By.XPATH, xpath)))
+    xpath_element.click()
 
-def reloadPage(): 
+def reload_page(): 
     driver.refresh()
 
-def closeAndQuitBrowser(): 
+def close_and_quit_browser(): 
     logsBufferTime = 5
     time.sleep(logsBufferTime)
     driver.close()
@@ -55,11 +55,11 @@ def runAll():
     okButtonXpath = "//button[@data-bb-handler='ok']"
 
     login()
-    timeinOrTimeout()
-    confirmPopUpByXPath(successButtonXPath)
-    confirmPopUpByXPath(okButtonXpath)
-    reloadPage()
-    closeAndQuitBrowser()
+    toggle_timein_or_timeout()
+    confirm_popup_by_xpath(successButtonXPath)
+    confirm_popup_by_xpath(okButtonXpath)
+    reload_page()
+    close_and_quit_browser()
 
 try: 
     runAll()
