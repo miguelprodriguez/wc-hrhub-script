@@ -30,7 +30,7 @@ def main():
 def login(): 
     driver.find_element(By.ID, "txtUsername").send_keys(os.getenv('USERNAME'))
     driver.find_element(By.ID, "txtPassword").send_keys(os.getenv('PASSWORD'))
-    driver.find_element(By.NAME, "btnLogIn").click()
+    driver.find_element(By.NAME, "sample").click()
 
 def toggle_timein_or_timeout():
     clock_classname = "clock-icon"
@@ -61,7 +61,5 @@ def close_and_quit_browser():
     driver.close()
     driver.quit()
 
-try: 
+if __name__ == "__main__":
     main()
-except: 
-    print("Something went wrong")
